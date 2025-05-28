@@ -15,9 +15,21 @@ class Settings(BaseSettings):
     DEBUG: bool = True
     
     # Security
-    SECRET_KEY: str = "your-secret-key-here"
+    SECRET_KEY: str = "your-secret-key-here-change-in-production"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 30
+    
+    # Password Requirements
+    MIN_PASSWORD_LENGTH: int = 8
+    REQUIRE_UPPERCASE: bool = False
+    REQUIRE_LOWERCASE: bool = False
+    REQUIRE_NUMBERS: bool = False
+    REQUIRE_SPECIAL_CHARS: bool = False
+    
+    # Rate Limiting
+    LOGIN_RATE_LIMIT: int = 5  # Max login attempts per minute
+    REGISTRATION_RATE_LIMIT: int = 3  # Max registrations per hour
     
     # Database
     DATABASE_URL: str = "mysql+pymysql://elearning:password@localhost:3306/elearning_db"
@@ -38,6 +50,13 @@ class Settings(BaseSettings):
     # Google Workspace (for future use)
     GOOGLE_CLIENT_ID: Optional[str] = None
     GOOGLE_CLIENT_SECRET: Optional[str] = None
+    
+    # Email Settings (for password reset, etc.)
+    SMTP_HOST: Optional[str] = None
+    SMTP_PORT: int = 587
+    SMTP_USERNAME: Optional[str] = None
+    SMTP_PASSWORD: Optional[str] = None
+    SMTP_USE_TLS: bool = True
     
     # Logging
     LOG_LEVEL: str = "INFO"

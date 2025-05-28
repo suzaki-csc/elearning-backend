@@ -74,11 +74,21 @@ cp .env.example .env
 
 ## 主要エンドポイント
 
+### 認証
+- `POST /api/v1/auth/register` - ユーザー登録
+- `POST /api/v1/auth/login` - ログイン（JWTトークン取得）
+- `POST /api/v1/auth/refresh` - アクセストークンリフレッシュ
+- `POST /api/v1/auth/logout` - ログアウト
+- `POST /api/v1/auth/change-password` - パスワード変更
+- `GET /api/v1/auth/me` - 現在のユーザー情報取得
+- `POST /api/v1/auth/verify-token` - トークン検証
+
 ### ユーザ管理
-- `GET /api/v1/users/` - ユーザ一覧取得
-- `POST /api/v1/users/` - ユーザ作成
-- `GET /api/v1/users/{user_id}` - ユーザ詳細取得
-- `PUT /api/v1/users/{user_id}` - ユーザ更新
+- `GET /api/v1/users/` - ユーザ一覧取得（管理者のみ）
+- `POST /api/v1/users/` - ユーザ作成（管理者のみ）
+- `GET /api/v1/users/{user_id}` - ユーザ詳細取得（管理者のみ）
+- `PUT /api/v1/users/{user_id}` - ユーザ更新（管理者のみ）
+- `DELETE /api/v1/users/{user_id}` - ユーザ削除（管理者のみ）
 - `GET /api/v1/users/me` - 現在のユーザ情報取得
 
 ### コンテンツ管理

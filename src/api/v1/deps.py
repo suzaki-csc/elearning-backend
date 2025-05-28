@@ -5,12 +5,10 @@ Dependency injection for FastAPI
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
-from jose import JWTError, jwt
 
 from src.config.database import get_db
-from src.config.settings import settings
 from src.models.user import User
-from src.services.user_service import UserService
+from src.services.auth_service import AuthService
 
 security = HTTPBearer()
 
@@ -20,7 +18,7 @@ async def get_current_user(
     db: Session = Depends(get_db)
 ) -> User:
     """
-    Get current authenticated user
+    Get current authenticated user from JWT token
     """
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -28,20 +26,13 @@ async def get_current_user(
         headers={"WWW-Authenticate": "Bearer"},
     )
     
-    try:
-        payload = jwt.decode(
-            credentials.credentials, 
-            settings.SECRET_KEY, 
-            algorithms=[settings.ALGORITHM]
-        )
-        user_id: str = payload.get("sub")
-        if user_id is None:
-            raise credentials_exception
-    except JWTError:
+    auth_service = AuthService(db)
+    token_data = auth_service.verify_token(credentials.credentials)
+    
+    if token_data is None or token_data.user_id is None:
         raise credentials_exception
     
-    user_service = UserService(db)
-    user = await user_service.get_user_by_id(user_id)
+    user = await auth_service.user_service.get_user_by_id(token_data.user_id)
     if user is None:
         raise credentials_exception
     
@@ -59,6 +50,36 @@ async def get_current_active_admin(
 ) -> User:
     """
     Get current active admin user
+    TODO: Implement proper role-based access control
+    For now, all authenticated users are considered admins
     """
-    # TODO: Add admin role check
     return current_user
+
+
+async def get_optional_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(
+        HTTPBearer(auto_error=False)
+    ),
+    db: Session = Depends(get_db)
+) -> User:
+    """
+    Get current user if token is provided, otherwise return None
+    Useful for endpoints that work for both authenticated and anonymous users
+    """
+    if credentials is None:
+        return None
+    
+    try:
+        auth_service = AuthService(db)
+        token_data = auth_service.verify_token(credentials.credentials)
+        
+        if token_data is None or token_data.user_id is None:
+            return None
+        
+        user = await auth_service.user_service.get_user_by_id(token_data.user_id)
+        if user is None or not user.is_active:
+            return None
+        
+        return user
+    except Exception:
+        return None
