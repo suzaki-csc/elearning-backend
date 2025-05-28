@@ -1,0 +1,76 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: build/Dockerfile
+    container_name: elearning-api
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=mysql+pymysql://elearning:password@mysql:3306/elearning_db
+      - REDIS_URL=redis://redis:6379/0
+      - SECRET_KEY=your-secret-key-here
+      - ALGORITHM=HS256
+      - ACCESS_TOKEN_EXPIRE_MINUTES=30
+    depends_on:
+      - mysql
+      - redis
+    volumes:
+      - .:/app
+    command: uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
+    networks:
+      - elearning-network
+
+  mysql:
+    image: mysql:8.0
+    container_name: elearning-mysql
+    environment:
+      - MYSQL_DATABASE=elearning_db
+      - MYSQL_USER=elearning
+      - MYSQL_PASSWORD=password
+      - MYSQL_ROOT_PASSWORD=rootpassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./build/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - elearning-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: elearning-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - elearning-network
+
+  test:
+    build:
+      context: .
+      dockerfile: build/Dockerfile
+    container_name: elearning-test
+    environment:
+      - DATABASE_URL=mysql+pymysql://elearning:password@mysql:3306/elearning_test_db
+      - REDIS_URL=redis://redis:6379/1
+      - SECRET_KEY=test-secret-key
+    depends_on:
+      - mysql
+      - redis
+    volumes:
+      - .:/app
+    command: pytest
+    networks:
+      - elearning-network
+    profiles:
+      - test
+
+volumes:
+  mysql_data:
+  redis_data:
+
+networks:
+  elearning-network:
+    driver: bridge
