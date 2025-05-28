@@ -81,6 +81,22 @@ cp .env.example .env
 - `PUT /api/v1/users/{user_id}` - ユーザ更新
 - `GET /api/v1/users/me` - 現在のユーザ情報取得
 
+### コンテンツ管理
+- `GET /api/v1/contents/` - コンテンツ一覧取得（検索・フィルタ対応）
+- `POST /api/v1/contents/` - コンテンツ作成（管理者のみ）
+- `GET /api/v1/contents/{content_id}` - コンテンツ詳細取得
+- `PUT /api/v1/contents/{content_id}` - コンテンツ更新（管理者のみ）
+- `DELETE /api/v1/contents/{content_id}` - コンテンツ削除（管理者のみ）
+- `POST /api/v1/contents/{content_id}/publish` - コンテンツ公開（管理者のみ）
+- `POST /api/v1/contents/{content_id}/unpublish` - コンテンツ非公開（管理者のみ）
+
+### カテゴリ管理
+- `GET /api/v1/contents/categories` - カテゴリ一覧取得
+- `POST /api/v1/contents/categories` - カテゴリ作成（管理者のみ）
+- `GET /api/v1/contents/categories/{category_id}` - カテゴリ詳細取得
+- `PUT /api/v1/contents/categories/{category_id}` - カテゴリ更新（管理者のみ）
+- `DELETE /api/v1/contents/categories/{category_id}` - カテゴリ削除（管理者のみ）
+
 ## 開発コマンド
 
 ### コード品質チェック
@@ -166,7 +182,7 @@ REDIS_URL=redis://host:port/0
 ## 今後の実装予定
 
 - [ ] Google Workspace OAuth2連携
-- [ ] コンテンツ管理API
+- [x] コンテンツ管理API
 - [ ] 学習進捗管理API
 - [ ] テスト・評価API
 - [ ] 通知システム
