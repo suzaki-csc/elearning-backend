@@ -3,6 +3,7 @@ Content model
 """
 
 from sqlalchemy import Column, String, Text, Integer, Boolean, ForeignKey
+from sqlalchemy.orm import relationship
 from src.models.base import BaseModel
 
 
@@ -32,3 +33,6 @@ class Content(BaseModel):
     duration_minutes = Column(Integer)
     is_published = Column(Boolean, default=False, nullable=False)
     created_by = Column(String(36), ForeignKey("users.user_id"))
+
+    # Relationships
+    learning_progress = relationship("LearningProgress", back_populates="content")

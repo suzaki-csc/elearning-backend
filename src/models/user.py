@@ -3,6 +3,7 @@ User model
 """
 
 from sqlalchemy import Column, String, Boolean, Text
+from sqlalchemy.orm import relationship
 from src.models.base import BaseModel
 
 
@@ -22,3 +23,6 @@ class User(BaseModel):
     position = Column(String(100))
     is_active = Column(Boolean, default=True, nullable=False)
     refresh_token = Column(Text, nullable=True)  # Store refresh token
+
+    # Relationships
+    learning_progress = relationship("LearningProgress", back_populates="user")

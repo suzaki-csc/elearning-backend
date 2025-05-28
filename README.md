@@ -107,6 +107,22 @@ cp .env.example .env
 - `PUT /api/v1/contents/categories/{category_id}` - カテゴリ更新（管理者のみ）
 - `DELETE /api/v1/contents/categories/{category_id}` - カテゴリ削除（管理者のみ）
 
+### 学習進捗管理
+- `POST /api/v1/learning/progress/{content_id}` - 学習進捗更新
+- `GET /api/v1/learning/progress/{content_id}` - 特定コンテンツの進捗取得
+- `GET /api/v1/learning/progress` - 全学習進捗取得
+- `GET /api/v1/learning/summary` - 学習進捗サマリー取得
+- `GET /api/v1/learning/stats/content/{content_id}` - コンテンツ統計取得（管理者のみ）
+
+### 学習課題管理
+- `POST /api/v1/learning/assignments` - 学習課題作成（管理者のみ）
+- `GET /api/v1/learning/assignments` - ユーザーの課題一覧取得
+
+### 学習パス管理
+- `POST /api/v1/learning/paths` - 学習パス作成（管理者のみ）
+- `GET /api/v1/learning/paths` - 学習パス一覧取得
+- `GET /api/v1/learning/paths/{path_id}/progress` - 学習パス進捗取得
+
 ## 開発コマンド
 
 ### コード品質チェック
@@ -193,7 +209,7 @@ REDIS_URL=redis://host:port/0
 
 - [ ] Google Workspace OAuth2連携
 - [x] コンテンツ管理API
-- [ ] 学習進捗管理API
+- [x] 学習進捗管理API
 - [ ] テスト・評価API
 - [ ] 通知システム
 - [ ] レポート機能
