@@ -91,6 +91,11 @@ class TestContentAPI:
         assert "contents" in data
 
     def test_unauthorized_access(self, client: TestClient):
-        """Test unauthorized access"""
-        response = client.get("/api/v1/contents/")
-        assert response.status_code == 401
+        """Test unauthorized access to admin endpoints"""
+        # Try to create category without authentication
+        response = client.post("/api/v1/contents/categories", json={
+            "name": "Test Category",
+            "description": "Test Description"
+        })
+        # FastAPI returns 403 when no credentials are provided with HTTPBearer
+        assert response.status_code == 403

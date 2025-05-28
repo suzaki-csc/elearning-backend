@@ -50,18 +50,19 @@ services:
   test:
     build:
       context: .
-      dockerfile: build/Dockerfile
+      dockerfile: build/Dockerfile.test
     container_name: elearning-test
     environment:
       - DATABASE_URL=mysql+pymysql://elearning:password@mysql:3306/elearning_test_db
       - REDIS_URL=redis://redis:6379/1
       - SECRET_KEY=test-secret-key
+      - PYTHONPATH=/app
     depends_on:
       - mysql
       - redis
     volumes:
       - .:/app
-    command: pytest
+    command: pytest -v --tb=short
     networks:
       - elearning-network
     profiles:

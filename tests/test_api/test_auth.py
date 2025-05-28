@@ -144,7 +144,8 @@ class TestAuthAPI:
     def test_unauthorized_access(self, client: TestClient):
         """Test unauthorized access"""
         response = client.get("/api/v1/auth/me")
-        assert response.status_code == 401
+        # FastAPI returns 403 when no credentials are provided with HTTPBearer
+        assert response.status_code == 403
 
     def test_invalid_token(self, client: TestClient):
         """Test access with invalid token"""
