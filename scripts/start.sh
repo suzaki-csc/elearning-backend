@@ -21,6 +21,12 @@ until docker-compose exec mysql mysqladmin ping -h"localhost" --silent; do
     sleep 2
 done
 
+# Initialize Alembic if not already done
+if [ ! -d "alembic/versions" ]; then
+    echo "Initializing Alembic migrations..."
+    docker-compose run --rm api alembic revision --autogenerate -m "Initial migration"
+fi
+
 # Run database migrations
 echo "Running database migrations..."
 docker-compose run --rm api alembic upgrade head
