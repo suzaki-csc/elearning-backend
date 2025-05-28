@@ -10,12 +10,17 @@ import os
 import sys
 
 # Add src directory to path
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+src_dir = os.path.join(parent_dir, 'src')
+sys.path.insert(0, src_dir)
 
-# Import your models here
+# Import your models here - IMPORTANT: Import all models
 from src.config.database import Base
+from src.models.base import BaseModel
 from src.models.user import User
 from src.models.content import Category, Content
+from src.models.learning import LearningAssignment, LearningProgress
 from src.config.settings import settings
 
 # this is the Alembic Config object, which provides
@@ -58,6 +63,8 @@ def run_migrations_offline() -> None:
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
+        compare_type=True,
+        compare_server_default=True,
     )
 
     with context.begin_transaction():
@@ -79,7 +86,10 @@ def run_migrations_online() -> None:
 
     with connectable.connect() as connection:
         context.configure(
-            connection=connection, target_metadata=target_metadata
+            connection=connection,
+            target_metadata=target_metadata,
+            compare_type=True,
+            compare_server_default=True,
         )
 
         with context.begin_transaction():
