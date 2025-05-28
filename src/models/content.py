@@ -8,9 +8,9 @@ from src.models.base import BaseModel
 
 class Category(BaseModel):
     """Category model"""
-    
+
     __tablename__ = "categories"
-    
+
     category_id = Column(String(36), primary_key=True, index=True)
     name = Column(String(100), nullable=False)
     description = Column(Text)
@@ -20,9 +20,9 @@ class Category(BaseModel):
 
 class Content(BaseModel):
     """Content model"""
-    
+
     __tablename__ = "contents"
-    
+
     content_id = Column(String(36), primary_key=True, index=True)
     title = Column(String(255), nullable=False)
     description = Column(Text)

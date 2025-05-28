@@ -15,7 +15,7 @@ security = HTTPBearer()
 
 async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ) -> User:
     """
     Get current authenticated user from JWT token
@@ -25,28 +25,27 @@ async def get_current_user(
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
-    
+
     auth_service = AuthService(db)
     token_data = auth_service.verify_token(credentials.credentials)
-    
+
     if token_data is None or token_data.user_id is None:
         raise credentials_exception
-    
+
     user = await auth_service.user_service.get_user_by_id(token_data.user_id)
     if user is None:
         raise credentials_exception
-    
+
     if not user.is_active:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Inactive user"
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Inactive user"
         )
-    
+
     return user
 
 
 async def get_current_active_admin(
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ) -> User:
     """
     Get current active admin user
@@ -57,10 +56,8 @@ async def get_current_active_admin(
 
 
 async def get_optional_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(
-        HTTPBearer(auto_error=False)
-    ),
-    db: Session = Depends(get_db)
+    credentials: HTTPAuthorizationCredentials = Depends(HTTPBearer(auto_error=False)),
+    db: Session = Depends(get_db),
 ) -> User:
     """
     Get current user if token is provided, otherwise return None
@@ -68,18 +65,18 @@ async def get_optional_current_user(
     """
     if credentials is None:
         return None
-    
+
     try:
         auth_service = AuthService(db)
         token_data = auth_service.verify_token(credentials.credentials)
-        
+
         if token_data is None or token_data.user_id is None:
             return None
-        
+
         user = await auth_service.user_service.get_user_by_id(token_data.user_id)
         if user is None or not user.is_active:
             return None
-        
+
         return user
     except Exception:
         return None

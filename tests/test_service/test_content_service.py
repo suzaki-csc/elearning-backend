@@ -1,8 +1,6 @@
 """
-Content service tests (placeholder)
+Tests for content service (placeholder)
 """
-
-import pytest
 
 
 def test_placeholder():

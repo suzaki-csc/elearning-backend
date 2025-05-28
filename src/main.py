@@ -22,7 +22,7 @@ structlog.configure(
         structlog.processors.TimeStamper(fmt="iso"),
         structlog.processors.StackInfoRenderer(),
         structlog.processors.format_exc_info,
-        structlog.processors.JSONRenderer()
+        structlog.processors.JSONRenderer(),
     ],
     context_class=dict,
     logger_factory=structlog.stdlib.LoggerFactory(),
@@ -53,7 +53,7 @@ app.add_middleware(
 async def logging_middleware(request: Request, call_next):
     """Request/Response logging middleware"""
     start_time = time.time()
-    
+
     # Log request
     logger.info(
         "Request started",
@@ -61,9 +61,9 @@ async def logging_middleware(request: Request, call_next):
         url=str(request.url),
         client_ip=request.client.host if request.client else None,
     )
-    
+
     response = await call_next(request)
-    
+
     # Log response
     process_time = time.time() - start_time
     logger.info(
@@ -73,7 +73,7 @@ async def logging_middleware(request: Request, call_next):
         status_code=response.status_code,
         process_time=process_time,
     )
-    
+
     return response
 
 
@@ -87,7 +87,7 @@ async def global_exception_handler(request: Request, exc: Exception):
         error=str(exc),
         exc_info=True,
     )
-    
+
     return JSONResponse(
         status_code=500,
         content={
@@ -97,7 +97,7 @@ async def global_exception_handler(request: Request, exc: Exception):
                 "message": "内部サーバーエラーが発生しました",
             },
             "timestamp": time.time(),
-        }
+        },
     )
 
 
@@ -127,6 +127,7 @@ async def health_check():
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(
         "src.main:app",
         host="0.0.0.0",

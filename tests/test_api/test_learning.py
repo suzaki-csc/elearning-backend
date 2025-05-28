@@ -1,9 +1,6 @@
 """
-Learning API tests (placeholder)
+Tests for learning API endpoints (placeholder)
 """
-
-import pytest
-from fastapi.testclient import TestClient
 
 
 def test_placeholder():

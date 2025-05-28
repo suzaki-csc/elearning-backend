@@ -2,12 +2,7 @@
 Tests for authentication API endpoints
 """
 
-import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy.orm import Session
-
-from src.main import app
-from src.schemas.auth import UserRegistration
 
 
 class TestAuthAPI:
@@ -20,11 +15,11 @@ class TestAuthAPI:
             "password": "testpassword123",
             "display_name": "Test User",
             "department": "Engineering",
-            "position": "Developer"
+            "position": "Developer",
         }
-        
+
         response = client.post("/api/v1/auth/register", json=user_data)
-        
+
         assert response.status_code == 201
         data = response.json()
         assert data["email"] == user_data["email"]
@@ -37,13 +32,13 @@ class TestAuthAPI:
         user_data = {
             "email": "duplicate@example.com",
             "password": "testpassword123",
-            "display_name": "Test User"
+            "display_name": "Test User",
         }
-        
+
         # First registration should succeed
         response1 = client.post("/api/v1/auth/register", json=user_data)
         assert response1.status_code == 201
-        
+
         # Second registration with same email should fail
         response2 = client.post("/api/v1/auth/register", json=user_data)
         assert response2.status_code == 400
@@ -55,18 +50,15 @@ class TestAuthAPI:
         user_data = {
             "email": "login@example.com",
             "password": "testpassword123",
-            "display_name": "Login User"
+            "display_name": "Login User",
         }
         client.post("/api/v1/auth/register", json=user_data)
-        
+
         # Then login
-        login_data = {
-            "email": "login@example.com",
-            "password": "testpassword123"
-        }
-        
+        login_data = {"email": "login@example.com", "password": "testpassword123"}
+
         response = client.post("/api/v1/auth/login", json=login_data)
-        
+
         assert response.status_code == 200
         data = response.json()
         assert "access_token" in data
@@ -76,13 +68,10 @@ class TestAuthAPI:
 
     def test_login_invalid_credentials(self, client: TestClient):
         """Test login with invalid credentials"""
-        login_data = {
-            "email": "nonexistent@example.com",
-            "password": "wrongpassword"
-        }
-        
+        login_data = {"email": "nonexistent@example.com", "password": "wrongpassword"}
+
         response = client.post("/api/v1/auth/login", json=login_data)
-        
+
         assert response.status_code == 401
         assert "Incorrect email or password" in response.json()["detail"]
 
@@ -92,22 +81,21 @@ class TestAuthAPI:
         user_data = {
             "email": "current@example.com",
             "password": "testpassword123",
-            "display_name": "Current User"
+            "display_name": "Current User",
         }
         client.post("/api/v1/auth/register", json=user_data)
-        
-        login_response = client.post("/api/v1/auth/login", json={
-            "email": "current@example.com",
-            "password": "testpassword123"
-        })
+
+        login_response = client.post(
+            "/api/v1/auth/login",
+            json={"email": "current@example.com", "password": "testpassword123"},
+        )
         token = login_response.json()["access_token"]
-        
+
         # Get current user info
         response = client.get(
-            "/api/v1/auth/me",
-            headers={"Authorization": f"Bearer {token}"}
+            "/api/v1/auth/me", headers={"Authorization": f"Bearer {token}"}
         )
-        
+
         assert response.status_code == 200
         data = response.json()
         assert data["email"] == user_data["email"]
@@ -119,22 +107,21 @@ class TestAuthAPI:
         user_data = {
             "email": "verify@example.com",
             "password": "testpassword123",
-            "display_name": "Verify User"
+            "display_name": "Verify User",
         }
         client.post("/api/v1/auth/register", json=user_data)
-        
-        login_response = client.post("/api/v1/auth/login", json={
-            "email": "verify@example.com",
-            "password": "testpassword123"
-        })
+
+        login_response = client.post(
+            "/api/v1/auth/login",
+            json={"email": "verify@example.com", "password": "testpassword123"},
+        )
         token = login_response.json()["access_token"]
-        
+
         # Verify token
         response = client.post(
-            "/api/v1/auth/verify-token",
-            headers={"Authorization": f"Bearer {token}"}
+            "/api/v1/auth/verify-token", headers={"Authorization": f"Bearer {token}"}
         )
-        
+
         assert response.status_code == 200
         data = response.json()
         assert data["valid"] is True
@@ -150,8 +137,7 @@ class TestAuthAPI:
     def test_invalid_token(self, client: TestClient):
         """Test access with invalid token"""
         response = client.get(
-            "/api/v1/auth/me",
-            headers={"Authorization": "Bearer invalid_token"}
+            "/api/v1/auth/me", headers={"Authorization": "Bearer invalid_token"}
         )
         assert response.status_code == 401
 
@@ -161,21 +147,20 @@ class TestAuthAPI:
         user_data = {
             "email": "logout@example.com",
             "password": "testpassword123",
-            "display_name": "Logout User"
+            "display_name": "Logout User",
         }
         client.post("/api/v1/auth/register", json=user_data)
-        
-        login_response = client.post("/api/v1/auth/login", json={
-            "email": "logout@example.com",
-            "password": "testpassword123"
-        })
+
+        login_response = client.post(
+            "/api/v1/auth/login",
+            json={"email": "logout@example.com", "password": "testpassword123"},
+        )
         token = login_response.json()["access_token"]
-        
+
         # Logout
         response = client.post(
-            "/api/v1/auth/logout",
-            headers={"Authorization": f"Bearer {token}"}
+            "/api/v1/auth/logout", headers={"Authorization": f"Bearer {token}"}
         )
-        
+
         assert response.status_code == 200
-        assert "Successfully logged out" in response.json()["message"] 
+        assert "Successfully logged out" in response.json()["message"]

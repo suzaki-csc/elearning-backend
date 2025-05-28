@@ -8,9 +8,9 @@ from src.models.base import BaseModel
 
 class LearningAssignment(BaseModel):
     """Learning assignment model (placeholder)"""
-    
+
     __tablename__ = "learning_assignments"
-    
+
     assignment_id = Column(String(36), primary_key=True, index=True)
     user_id = Column(String(36), ForeignKey("users.user_id"))
     content_id = Column(String(36), ForeignKey("contents.content_id"))
@@ -21,9 +21,9 @@ class LearningAssignment(BaseModel):
 
 class LearningProgress(BaseModel):
     """Learning progress model (placeholder)"""
-    
+
     __tablename__ = "learning_progress"
-    
+
     progress_id = Column(String(36), primary_key=True, index=True)
     assignment_id = Column(String(36), ForeignKey("learning_assignments.assignment_id"))
     progress_percentage = Column(Integer, default=0)

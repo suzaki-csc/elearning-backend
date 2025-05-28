@@ -10,6 +10,7 @@ from enum import Enum
 
 class ContentType(str, Enum):
     """Content type enumeration"""
+
     VIDEO = "video"
     DOCUMENT = "document"
     QUIZ = "quiz"
@@ -20,6 +21,7 @@ class ContentType(str, Enum):
 # Category schemas
 class CategoryBase(BaseModel):
     """Base category schema"""
+
     name: str = Field(..., min_length=1, max_length=100)
     description: Optional[str] = None
     parent_id: Optional[str] = None
@@ -27,11 +29,13 @@ class CategoryBase(BaseModel):
 
 class CategoryCreate(CategoryBase):
     """Category creation schema"""
+
     pass
 
 
 class CategoryUpdate(BaseModel):
     """Category update schema"""
+
     name: Optional[str] = Field(None, min_length=1, max_length=100)
     description: Optional[str] = None
     parent_id: Optional[str] = None
@@ -40,11 +44,12 @@ class CategoryUpdate(BaseModel):
 
 class CategoryResponse(CategoryBase):
     """Category response schema"""
+
     category_id: str
     is_active: bool
     created_at: datetime
     updated_at: datetime
-    
+
     class Config:
         from_attributes = True
 
@@ -52,6 +57,7 @@ class CategoryResponse(CategoryBase):
 # Content schemas
 class ContentBase(BaseModel):
     """Base content schema"""
+
     title: str = Field(..., min_length=1, max_length=255)
     description: Optional[str] = None
     content_type: ContentType
@@ -62,11 +68,13 @@ class ContentBase(BaseModel):
 
 class ContentCreate(ContentBase):
     """Content creation schema"""
+
     pass
 
 
 class ContentUpdate(BaseModel):
     """Content update schema"""
+
     title: Optional[str] = Field(None, min_length=1, max_length=255)
     description: Optional[str] = None
     content_type: Optional[ContentType] = None
@@ -78,18 +86,20 @@ class ContentUpdate(BaseModel):
 
 class ContentResponse(ContentBase):
     """Content response schema"""
+
     content_id: str
     is_published: bool
     created_by: Optional[str]
     created_at: datetime
     updated_at: datetime
-    
+
     class Config:
         from_attributes = True
 
 
 class ContentListResponse(BaseModel):
     """Content list response schema"""
+
     contents: List[ContentResponse]
     total: int
     page: int
@@ -99,6 +109,7 @@ class ContentListResponse(BaseModel):
 
 class CategoryListResponse(BaseModel):
     """Category list response schema"""
+
     categories: List[CategoryResponse]
     total: int
     page: int

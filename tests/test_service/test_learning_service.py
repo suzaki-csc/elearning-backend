@@ -1,8 +1,6 @@
 """
-Learning service tests (placeholder)
+Tests for learning service (placeholder)
 """
-
-import pytest
 
 
 def test_placeholder():

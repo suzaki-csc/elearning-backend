@@ -10,7 +10,6 @@ from sqlalchemy.pool import StaticPool
 
 from src.main import app
 from src.config.database import get_db, Base
-from src.config.settings import settings
 
 
 # Create test database engine
@@ -46,9 +45,9 @@ def db_session(db_engine):
     connection = db_engine.connect()
     transaction = connection.begin()
     session = TestingSessionLocal(bind=connection)
-    
+
     yield session
-    
+
     session.close()
     transaction.rollback()
     connection.close()
@@ -71,7 +70,7 @@ def test_user_data():
         "password": "testpassword123",
         "display_name": "Test User",
         "department": "Engineering",
-        "position": "Developer"
+        "position": "Developer",
     }
 
 
@@ -83,7 +82,7 @@ def admin_user_data():
         "password": "adminpassword123",
         "display_name": "Admin User",
         "department": "Management",
-        "position": "Administrator"
+        "position": "Administrator",
     }
 
 
@@ -92,13 +91,13 @@ def user_token(client: TestClient, test_user_data):
     """Create a test user and return access token"""
     # Register user
     client.post("/api/v1/auth/register", json=test_user_data)
-    
+
     # Login and get token
-    login_response = client.post("/api/v1/auth/login", json={
-        "email": test_user_data["email"],
-        "password": test_user_data["password"]
-    })
-    
+    login_response = client.post(
+        "/api/v1/auth/login",
+        json={"email": test_user_data["email"], "password": test_user_data["password"]},
+    )
+
     return login_response.json()["access_token"]
 
 
@@ -107,11 +106,14 @@ def admin_token(client: TestClient, admin_user_data):
     """Create an admin user and return access token"""
     # Register admin user
     client.post("/api/v1/auth/register", json=admin_user_data)
-    
+
     # Login and get token
-    login_response = client.post("/api/v1/auth/login", json={
-        "email": admin_user_data["email"],
-        "password": admin_user_data["password"]
-    })
-    
-    return login_response.json()["access_token"] 
+    login_response = client.post(
+        "/api/v1/auth/login",
+        json={
+            "email": admin_user_data["email"],
+            "password": admin_user_data["password"],
+        },
+    )
+
+    return login_response.json()["access_token"]
