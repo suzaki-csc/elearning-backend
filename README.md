@@ -1,6 +1,6 @@
 # E-Learning System Backend
 
-（本Repogitoryは、全てをClaud-3.7を使用して開発工程を実行してみたプロトタイプです）
+（本Repogitoryは、全てをClaud-3.7を使用して開発工程を実行してみたプロトタイプです）  
 社内向けe-learningシステムのバックエンドAPI
 
 ## 技術スタック
